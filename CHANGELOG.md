@@ -13,11 +13,17 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 ### Additions
 - Add random library sort
 
+### Changes
+- Temporarily disable log file
+
 ### Fixes
 - Allow users to bypass onboarding's permission step if Shizuku is installed
 - Fix Recents page shows "No recent chapters" instead of a loading screen
 - Fix not fully loaded entries can't be selected on Library page
 - Fix certain Infinix devices being unable to use any "Open link in browser" actions, including tracker setup (@MajorTanya)
+
+### Translation
+- Update translations from Weblate
 
 ### Other
 - Refactor Library to utilize Flow even more
