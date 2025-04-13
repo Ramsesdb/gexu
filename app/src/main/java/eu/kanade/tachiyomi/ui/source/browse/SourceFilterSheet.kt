@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.withStyledAttributes
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsCompat.Type.systemBars
 import androidx.core.view.updateLayoutParams
@@ -21,6 +22,7 @@ import eu.kanade.tachiyomi.util.view.checkHeightThen
 import eu.kanade.tachiyomi.util.view.collapse
 import eu.kanade.tachiyomi.util.view.doOnApplyWindowInsetsCompat
 import eu.kanade.tachiyomi.widget.E2EBottomSheetDialog
+import yokai.presentation.component.recyclerview.VertPaddingDecoration
 import android.R as AR
 
 class SourceFilterSheet(val activity: Activity) :
@@ -92,6 +94,7 @@ class SourceFilterSheet(val activity: Activity) :
         }
 
         binding.filtersRecycler.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+        binding.filtersRecycler.addItemDecoration(VertPaddingDecoration(12.dpToPx))
         binding.filtersRecycler.clipToPadding = false
         binding.filtersRecycler.adapter = adapter
         binding.filtersRecycler.setHasFixedSize(false)
@@ -132,17 +135,17 @@ class SourceFilterSheet(val activity: Activity) :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val attrsArray = intArrayOf(AR.attr.actionBarSize)
-        val array = context.obtainStyledAttributes(attrsArray)
-        val headerHeight = array.getDimensionPixelSize(0, 0)
-        binding.titleLayout.updatePaddingRelative(
-            bottom = activity.window.decorView.rootWindowInsetsCompat
-                ?.getInsets(systemBars())?.bottom ?: 0,
-        )
+        context.withStyledAttributes(null, attrsArray) {
+            val headerHeight = getDimensionPixelSize(0, 0)
+            binding.titleLayout.updatePaddingRelative(
+                bottom = activity.window.decorView.rootWindowInsetsCompat
+                    ?.getInsets(systemBars())?.bottom ?: 0,
+            )
 
-        binding.titleLayout.updateLayoutParams<ConstraintLayout.LayoutParams> {
-            height = headerHeight + binding.titleLayout.paddingBottom
+            binding.titleLayout.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                height = headerHeight + binding.titleLayout.paddingBottom
+            }
         }
-        array.recycle()
     }
 
     private fun updateBottomButtons() {
