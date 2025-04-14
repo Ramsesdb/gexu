@@ -25,6 +25,7 @@ fun runCommand(command: String): String {
     return result.standardOutput.asText.get().trim()
 }
 
+@Suppress("PropertyName")
 val _versionName = "1.9.8"
 val betaCount by lazy {
     val betaTags = runCommand("git tag -l --sort=refname v${_versionName}-b*")
