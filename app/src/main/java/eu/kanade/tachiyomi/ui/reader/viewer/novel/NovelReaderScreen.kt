@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:standard:max-line-length")
+
 package eu.kanade.tachiyomi.ui.reader.viewer.novel
 
 import androidx.compose.animation.AnimatedVisibility
@@ -46,7 +48,6 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import logcat.logcat
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -76,8 +77,8 @@ import kotlin.math.absoluteValue
 
 // Reading direction for novel reader
 enum class ReadingDirection {
-    VERTICAL,  // LazyColumn scroll
-    BOOK       // HorizontalPager (book-style page swipe)
+    VERTICAL, // LazyColumn scroll
+    BOOK, // HorizontalPager (book-style page swipe)
 }
 
 @Composable
@@ -113,7 +114,6 @@ fun NovelReaderScreen(
     onTocNavigate: (Int) -> Unit = {},
     onAiClick: () -> Unit = {},
 ) {
-
     // TOC modal state
     var showTocModal by remember { mutableStateOf(false) }
     // Calculate total items
@@ -127,7 +127,7 @@ fun NovelReaderScreen(
     val listState = rememberLazyListState(initialFirstVisibleItemIndex = initialPage)
     val pagerState = rememberPagerState(
         initialPage = initialPage,
-        pageCount = { totalItems.coerceAtLeast(1) }
+        pageCount = { totalItems.coerceAtLeast(1) },
     )
 
     // Track if we've done the initial navigation
@@ -138,7 +138,9 @@ fun NovelReaderScreen(
     // This watches for content load and forces the jump to saved position.
     LaunchedEffect(totalItems, initialPage) {
         if (totalItems > initialPage && initialPage > 0 && !hasNavigated) {
-            logcat { "NovelReaderScreen: Async content loaded ($totalItems items), jumping to saved page $initialPage" }
+            logcat {
+                "NovelReaderScreen: Async content loaded ($totalItems items), jumping to saved page $initialPage"
+            }
             if (prefs.readingDirection == ReadingDirection.BOOK) {
                 pagerState.scrollToPage(initialPage)
             } else {
@@ -154,10 +156,13 @@ fun NovelReaderScreen(
             val safeTarget = targetPageIndex.coerceIn(0, totalItems - 1)
 
             // Only force scroll if we haven't navigated yet OR if it's a new target
-            if (!hasNavigated || (
-                (prefs.readingDirection == ReadingDirection.VERTICAL && listState.firstVisibleItemIndex != safeTarget) ||
+            if (!hasNavigated ||
+                (
+                    prefs.readingDirection == ReadingDirection.VERTICAL &&
+                        listState.firstVisibleItemIndex != safeTarget
+                    ) ||
                 (prefs.readingDirection == ReadingDirection.BOOK && pagerState.currentPage != safeTarget)
-            )) {
+            ) {
                 if (prefs.readingDirection == ReadingDirection.BOOK) {
                     pagerState.scrollToPage(safeTarget)
                 } else {
@@ -224,29 +229,28 @@ fun NovelReaderScreen(
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = prefs.theme.backgroundColor()
+        color = prefs.theme.backgroundColor(),
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-
             // Loading state - clean loader with optional message
             if (isLoading && textPages.isEmpty() && images.isEmpty()) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
                         CircularProgressIndicator(
-                            color = MaterialTheme.colorScheme.primary
+                            color = MaterialTheme.colorScheme.primary,
                         )
                         if (loadingMessage != null) {
                             Text(
                                 text = loadingMessage,
                                 color = prefs.theme.textColor(),
                                 style = MaterialTheme.typography.bodyMedium,
-                                textAlign = TextAlign.Center
+                                textAlign = TextAlign.Center,
                             )
                         }
                     }
@@ -261,21 +265,21 @@ fun NovelReaderScreen(
                         }
                         .padding(32.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                    verticalArrangement = Arrangement.Center,
                 ) {
                     CircularProgressIndicator(
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.primary,
                     )
                     Spacer(modifier = Modifier.size(16.dp))
                     Text(
                         text = "Extrayendo texto...",
                         style = MaterialTheme.typography.titleMedium,
-                        color = prefs.theme.textColor()
+                        color = prefs.theme.textColor(),
                     )
                     Text(
                         text = "${ocrProgress.first} / ${ocrProgress.second}",
                         style = MaterialTheme.typography.bodyLarge,
-                        color = prefs.theme.textColor().copy(alpha = 0.7f)
+                        color = prefs.theme.textColor().copy(alpha = 0.7f),
                     )
                 }
             } else {
@@ -293,7 +297,7 @@ fun NovelReaderScreen(
                                     })
                                 }
                                 .padding(horizontal = 16.dp),
-                            contentPadding = PaddingValues(vertical = 12.dp)
+                            contentPadding = PaddingValues(vertical = 12.dp),
                         ) {
                             // Unified Hybrid Rendering (Index by Index)
                             val totalCount = maxOf(textPages.size, images.size).coerceAtLeast(1)
@@ -306,7 +310,7 @@ fun NovelReaderScreen(
                                     Column(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .padding(bottom = 24.dp)
+                                            .padding(bottom = 24.dp),
                                     ) {
                                         // Page number divider
                                         Text(
@@ -316,7 +320,7 @@ fun NovelReaderScreen(
                                             modifier = Modifier
                                                 .fillMaxWidth()
                                                 .padding(bottom = 8.dp),
-                                            textAlign = TextAlign.Center
+                                            textAlign = TextAlign.Center,
                                         )
 
                                         // Text content
@@ -327,55 +331,57 @@ fun NovelReaderScreen(
                                             tocItems.map { it.title.trim().lowercase() }.toHashSet()
                                         }
 
-                                        val annotatedText = remember(pageContent, prefs.fontSizeSp, tocTitleSet, textColor) {
-                                            androidx.compose.ui.text.buildAnnotatedString {
-                                                val lines = pageContent.split("\n")
-                                                lines.forEachIndexed { index, line ->
-                                                    val cleanLine = line.trim()
-                                                    val cleanLineLower = cleanLine.lowercase()
+                                        val annotatedText =
+                                            remember(pageContent, prefs.fontSizeSp, tocTitleSet, textColor) {
+                                                androidx.compose.ui.text.buildAnnotatedString {
+                                                    val lines = pageContent.split("\n")
+                                                    lines.forEachIndexed { index, line ->
+                                                        val cleanLine = line.trim()
+                                                        val cleanLineLower = cleanLine.lowercase()
 
-                                                    val isTitle = cleanLine.isNotEmpty() && cleanLine.length < 100 && (
-                                                        cleanLine.startsWith("Capítulo", true) ||
-                                                        cleanLine.startsWith("Chapter", true) ||
-                                                        cleanLine.startsWith("Epílogo", true) ||
-                                                        cleanLine.startsWith("Epilogue", true) ||
-                                                        cleanLine.startsWith("Prólogo", true) ||
-                                                        cleanLine.startsWith("Prologue", true) ||
-                                                        tocTitleSet.contains(cleanLineLower)
-                                                    )
+                                                        val isTitle =
+                                                            cleanLine.isNotEmpty() && cleanLine.length < 100 && (
+                                                                cleanLine.startsWith("Capítulo", true) ||
+                                                                    cleanLine.startsWith("Chapter", true) ||
+                                                                    cleanLine.startsWith("Epílogo", true) ||
+                                                                    cleanLine.startsWith("Epilogue", true) ||
+                                                                    cleanLine.startsWith("Prólogo", true) ||
+                                                                    cleanLine.startsWith("Prologue", true) ||
+                                                                    tocTitleSet.contains(cleanLineLower)
+                                                                )
 
-                                                    if (isTitle) {
-                                                        pushStyle(
-                                                            androidx.compose.ui.text.SpanStyle(
-                                                                fontSize = (prefs.fontSizeSp * 1.4f).sp,
-                                                                fontWeight = FontWeight.Bold,
-                                                                color = textColor
+                                                        if (isTitle) {
+                                                            pushStyle(
+                                                                androidx.compose.ui.text.SpanStyle(
+                                                                    fontSize = (prefs.fontSizeSp * 1.4f).sp,
+                                                                    fontWeight = FontWeight.Bold,
+                                                                    color = textColor,
+                                                                ),
                                                             )
-                                                        )
-                                                        append(line)
-                                                        pop()
-                                                    } else {
-                                                        pushStyle(
-                                                            androidx.compose.ui.text.SpanStyle(
-                                                                fontSize = prefs.fontSizeSp.sp,
-                                                                color = textColor
+                                                            append(line)
+                                                            pop()
+                                                        } else {
+                                                            pushStyle(
+                                                                androidx.compose.ui.text.SpanStyle(
+                                                                    fontSize = prefs.fontSizeSp.sp,
+                                                                    color = textColor,
+                                                                ),
                                                             )
-                                                        )
-                                                        append(line)
-                                                        pop()
+                                                            append(line)
+                                                            pop()
+                                                        }
+                                                        if (index < lines.lastIndex) append("\n")
                                                     }
-                                                    if (index < lines.lastIndex) append("\n")
                                                 }
                                             }
-                                        }
 
                                         Text(
                                             text = annotatedText,
                                             style = TextStyle(
                                                 lineHeight = (prefs.fontSizeSp * prefs.lineHeightEm).sp,
-                                                textAlign = TextAlign.Justify
+                                                textAlign = TextAlign.Justify,
                                             ),
-                                            modifier = Modifier.fillMaxWidth()
+                                            modifier = Modifier.fillMaxWidth(),
                                         )
                                     }
                                 } else if (index < images.size) {
@@ -388,7 +394,7 @@ fun NovelReaderScreen(
                                         PdfPageItem(
                                             pageIndex = pageIndex,
                                             renderer = onRenderPage,
-                                            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                                            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                                         )
                                     } else {
                                         // Use OptimizedReaderImage - it handles page loading internally like WebtoonPageHolder
@@ -396,22 +402,20 @@ fun NovelReaderScreen(
                                             page = page,
                                             imageUrl = imageUrl,
                                             modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-                                            contentScale = ContentScale.FillWidth
+                                            contentScale = ContentScale.FillWidth,
                                         )
                                     }
-
-
                                 } else {
                                     // Loading / Placeholder
                                     Box(
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .height(200.dp),
-                                        contentAlignment = Alignment.Center
+                                        contentAlignment = Alignment.Center,
                                     ) {
                                         CircularProgressIndicator(
                                             color = prefs.theme.textColor(),
-                                            modifier = Modifier.size(24.dp)
+                                            modifier = Modifier.size(24.dp),
                                         )
                                     }
                                 }
@@ -428,23 +432,28 @@ fun NovelReaderScreen(
                                         modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
                                         color = prefs.theme.backgroundColor(),
                                         shape = RoundedCornerShape(8.dp),
-                                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
+                                        border = BorderStroke(
+                                            1.dp,
+                                            MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
+                                        ),
                                     ) {
                                         Column(
                                             modifier = Modifier.padding(16.dp),
-                                            horizontalAlignment = Alignment.CenterHorizontally
+                                            horizontalAlignment = Alignment.CenterHorizontally,
                                         ) {
                                             LinearProgressIndicator(
-                                                progress = { ocrProgress.first.toFloat() / ocrProgress.second.toFloat() },
+                                                progress = {
+                                                    ocrProgress.first.toFloat() / ocrProgress.second.toFloat()
+                                                },
                                                 modifier = Modifier.fillMaxWidth(),
                                                 color = MaterialTheme.colorScheme.primary,
-                                                trackColor = MaterialTheme.colorScheme.surfaceVariant
+                                                trackColor = MaterialTheme.colorScheme.surfaceVariant,
                                             )
                                             Text(
                                                 text = "Extrayendo texto: ${ocrProgress.first} de ${ocrProgress.second}",
                                                 style = MaterialTheme.typography.labelSmall,
                                                 color = prefs.theme.textColor().copy(alpha = 0.7f),
-                                                modifier = Modifier.padding(top = 8.dp)
+                                                modifier = Modifier.padding(top = 8.dp),
                                             )
                                         }
                                     }
@@ -469,9 +478,9 @@ fun NovelReaderScreen(
                                 },
                             flingBehavior = PagerDefaults.flingBehavior(
                                 state = pagerState,
-                                snapAnimationSpec = tween(durationMillis = 300)
+                                snapAnimationSpec = tween(durationMillis = 300),
                             ),
-                            pageSpacing = 0.dp
+                            pageSpacing = 0.dp,
                         ) { pageIndex ->
                             // Page flip effect
                             val pageOffset = (pagerState.currentPage - pageIndex) + pagerState.currentPageOffsetFraction
@@ -492,7 +501,7 @@ fun NovelReaderScreen(
                                         alpha = 1f - (pageOffset.absoluteValue * 0.2f).coerceIn(0f, 0.2f)
                                     }
                                     .background(prefs.theme.backgroundColor())
-                                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                                    .padding(horizontal = 16.dp, vertical = 12.dp),
                             ) {
                                 // Determine what to show at this index
                                 // Fix: Check if text is actually available for THIS page. If empty, show image fallback.
@@ -507,7 +516,7 @@ fun NovelReaderScreen(
                                     Column(
                                         modifier = Modifier
                                             .fillMaxSize()
-                                            .verticalScroll(rememberScrollState())
+                                            .verticalScroll(rememberScrollState()),
                                     ) {
                                         // Page number at top
                                         Text(
@@ -517,7 +526,7 @@ fun NovelReaderScreen(
                                             modifier = Modifier
                                                 .fillMaxWidth()
                                                 .padding(bottom = 12.dp),
-                                            textAlign = TextAlign.Center
+                                            textAlign = TextAlign.Center,
                                         )
 
                                         // Styled Text content (Book Mode)
@@ -527,57 +536,59 @@ fun NovelReaderScreen(
                                             tocItems.map { it.title.trim().lowercase() }.toHashSet()
                                         }
 
-                                        val annotatedText = remember(textPages[pageIndex], prefs.fontSizeSp, tocTitleSet, textColor) {
-                                            androidx.compose.ui.text.buildAnnotatedString {
-                                                val content = textPages[pageIndex]
-                                                val lines = content.split("\n")
-                                                lines.forEachIndexed { index, line ->
-                                                    val cleanLine = line.trim()
-                                                    val cleanLineLower = cleanLine.lowercase()
+                                        val annotatedText =
+                                            remember(textPages[pageIndex], prefs.fontSizeSp, tocTitleSet, textColor) {
+                                                androidx.compose.ui.text.buildAnnotatedString {
+                                                    val content = textPages[pageIndex]
+                                                    val lines = content.split("\n")
+                                                    lines.forEachIndexed { index, line ->
+                                                        val cleanLine = line.trim()
+                                                        val cleanLineLower = cleanLine.lowercase()
 
-                                                    val isTitle = cleanLine.isNotEmpty() && cleanLine.length < 100 && (
-                                                        cleanLine.startsWith("Capítulo", true) ||
-                                                        cleanLine.startsWith("Chapter", true) ||
-                                                        cleanLine.startsWith("Epílogo", true) ||
-                                                        cleanLine.startsWith("Epilogue", true) ||
-                                                        cleanLine.startsWith("Prólogo", true) ||
-                                                        cleanLine.startsWith("Prologue", true) ||
-                                                        tocTitleSet.contains(cleanLineLower)
-                                                    )
+                                                        val isTitle =
+                                                            cleanLine.isNotEmpty() && cleanLine.length < 100 && (
+                                                                cleanLine.startsWith("Capítulo", true) ||
+                                                                    cleanLine.startsWith("Chapter", true) ||
+                                                                    cleanLine.startsWith("Epílogo", true) ||
+                                                                    cleanLine.startsWith("Epilogue", true) ||
+                                                                    cleanLine.startsWith("Prólogo", true) ||
+                                                                    cleanLine.startsWith("Prologue", true) ||
+                                                                    tocTitleSet.contains(cleanLineLower)
+                                                                )
 
-                                                    if (isTitle) {
-                                                        pushStyle(
-                                                            androidx.compose.ui.text.SpanStyle(
-                                                                fontSize = (prefs.fontSizeSp * 1.4f).sp,
-                                                                fontWeight = FontWeight.Bold,
-                                                                color = textColor
+                                                        if (isTitle) {
+                                                            pushStyle(
+                                                                androidx.compose.ui.text.SpanStyle(
+                                                                    fontSize = (prefs.fontSizeSp * 1.4f).sp,
+                                                                    fontWeight = FontWeight.Bold,
+                                                                    color = textColor,
+                                                                ),
                                                             )
-                                                        )
-                                                        append(line)
-                                                        pop()
-                                                    } else {
-                                                        pushStyle(
-                                                            androidx.compose.ui.text.SpanStyle(
-                                                                fontSize = prefs.fontSizeSp.sp,
-                                                                color = textColor
+                                                            append(line)
+                                                            pop()
+                                                        } else {
+                                                            pushStyle(
+                                                                androidx.compose.ui.text.SpanStyle(
+                                                                    fontSize = prefs.fontSizeSp.sp,
+                                                                    color = textColor,
+                                                                ),
                                                             )
-                                                        )
-                                                        append(line)
-                                                        pop()
+                                                            append(line)
+                                                            pop()
+                                                        }
+                                                        if (index < lines.lastIndex) append("\n")
                                                     }
-                                                    if (index < lines.lastIndex) append("\n")
                                                 }
                                             }
-                                        }
 
                                         Text(
                                             text = annotatedText,
                                             style = TextStyle(
                                                 lineHeight = (prefs.fontSizeSp * prefs.lineHeightEm).sp,
                                                 textAlign = TextAlign.Justify,
-                                                color = textColor
+                                                color = textColor,
                                             ),
-                                            modifier = Modifier.fillMaxWidth()
+                                            modifier = Modifier.fillMaxWidth(),
                                         )
                                     }
                                 } else if (imageIndex >= 0 && imageIndex < images.size) {
@@ -590,7 +601,7 @@ fun NovelReaderScreen(
                                         PdfPageItem(
                                             pageIndex = pdfPageIndex,
                                             renderer = onRenderPage,
-                                            modifier = Modifier.fillMaxSize()
+                                            modifier = Modifier.fillMaxSize(),
                                         )
                                     } else {
                                         // Use OptimizedReaderImage - it handles page loading internally like WebtoonPageHolder
@@ -598,30 +609,29 @@ fun NovelReaderScreen(
                                             page = page,
                                             imageUrl = imageUrl,
                                             modifier = Modifier.fillMaxSize(),
-                                            contentScale = ContentScale.Fit
+                                            contentScale = ContentScale.Fit,
                                         )
                                     }
-
                                 } else {
                                     // Empty or loading
                                     Box(
                                         modifier = Modifier.fillMaxSize(),
-                                        contentAlignment = Alignment.Center
+                                        contentAlignment = Alignment.Center,
                                     ) {
                                         if (ocrProgress != null) {
                                             Column(
-                                                horizontalAlignment = Alignment.CenterHorizontally
+                                                horizontalAlignment = Alignment.CenterHorizontally,
                                             ) {
                                                 CircularProgressIndicator(
                                                     color = prefs.theme.textColor(),
                                                     modifier = Modifier.size(32.dp),
-                                                    strokeWidth = 2.dp
+                                                    strokeWidth = 2.dp,
                                                 )
                                                 Spacer(modifier = Modifier.size(12.dp))
                                                 Text(
                                                     text = "${ocrProgress.first}/${ocrProgress.second}",
                                                     color = prefs.theme.textColor().copy(alpha = 0.7f),
-                                                    style = MaterialTheme.typography.bodySmall
+                                                    style = MaterialTheme.typography.bodySmall,
                                                 )
                                             }
                                         }
@@ -639,7 +649,7 @@ fun NovelReaderScreen(
                 visible = menuVisible,
                 enter = slideInHorizontally { -it },
                 exit = slideOutHorizontally { -it },
-                modifier = Modifier.align(Alignment.CenterStart)
+                modifier = Modifier.align(Alignment.CenterStart),
             ) {
                 NovelReaderControls(
                     prefs = prefs,
@@ -671,7 +681,7 @@ fun NovelReaderScreen(
                         showTocModal = false
                         onTocNavigate(page)
                     },
-                    onDismiss = { showTocModal = false }
+                    onDismiss = { showTocModal = false },
                 )
             }
         }
@@ -704,10 +714,10 @@ fun NovelReaderControls(
         shape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),
         color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
         tonalElevation = 4.dp,
-        shadowElevation = 16.dp
+        shadowElevation = 16.dp,
     ) {
         Column(
-            modifier = Modifier.padding(12.dp)
+            modifier = Modifier.padding(12.dp),
         ) {
             // Header - more compact
             Text(
@@ -715,7 +725,7 @@ fun NovelReaderControls(
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(bottom = 12.dp, start = 4.dp)
+                modifier = Modifier.padding(bottom = 12.dp, start = 4.dp),
             )
 
             // Reading Direction Toggle
@@ -723,12 +733,12 @@ fun NovelReaderControls(
                 "Dirección de Lectura",
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(bottom = 6.dp, start = 4.dp)
+                modifier = Modifier.padding(bottom = 6.dp, start = 4.dp),
             )
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
                 // Vertical button
                 FilledTonalButton(
@@ -738,16 +748,16 @@ fun NovelReaderControls(
                     colors = if (prefs.readingDirection == ReadingDirection.VERTICAL) {
                         androidx.compose.material3.ButtonDefaults.filledTonalButtonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
                         )
                     } else {
                         androidx.compose.material3.ButtonDefaults.filledTonalButtonColors()
-                    }
+                    },
                 ) {
                     Icon(
                         Icons.Default.SwapVert,
                         contentDescription = null,
-                        modifier = Modifier.size(16.dp)
+                        modifier = Modifier.size(16.dp),
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text("Scroll", style = MaterialTheme.typography.labelSmall)
@@ -761,16 +771,16 @@ fun NovelReaderControls(
                     colors = if (prefs.readingDirection == ReadingDirection.BOOK) {
                         androidx.compose.material3.ButtonDefaults.filledTonalButtonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
                         )
                     } else {
                         androidx.compose.material3.ButtonDefaults.filledTonalButtonColors()
-                    }
+                    },
                 ) {
                     Icon(
                         Icons.AutoMirrored.Filled.MenuBook,
                         contentDescription = null,
-                        modifier = Modifier.size(16.dp)
+                        modifier = Modifier.size(16.dp),
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text("Libro", style = MaterialTheme.typography.labelSmall)
@@ -788,18 +798,21 @@ fun NovelReaderControls(
                         onToggleTextMode()
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
                 ) {
                     Icon(
-                        if (showTextMode) Icons.Default.Visibility
-                        else Icons.Default.TextFields,
+                        if (showTextMode) {
+                            Icons.Default.Visibility
+                        } else {
+                            Icons.Default.TextFields
+                        },
                         contentDescription = null,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(18.dp),
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         if (showTextMode) "Ver Imágenes" else "Ver Texto",
-                        style = MaterialTheme.typography.labelMedium
+                        style = MaterialTheme.typography.labelMedium,
                     )
                 }
                 Spacer(modifier = Modifier.size(8.dp))
@@ -814,12 +827,12 @@ fun NovelReaderControls(
                         onExtractOcr()
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
                 ) {
                     Icon(
                         Icons.Default.Refresh,
                         contentDescription = null,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(18.dp),
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text("Extraer Texto (OCR)", style = MaterialTheme.typography.labelMedium)
@@ -837,13 +850,13 @@ fun NovelReaderControls(
                     shape = RoundedCornerShape(12.dp),
                     colors = androidx.compose.material3.ButtonDefaults.filledTonalButtonColors(
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                    )
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    ),
                 ) {
                     Icon(
                         Icons.AutoMirrored.Filled.List,
                         contentDescription = null,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(18.dp),
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text("Tabla de Contenido", style = MaterialTheme.typography.labelMedium)
@@ -875,28 +888,36 @@ fun NovelReaderControls(
                 Text("Preguntar a Gexu AI", style = MaterialTheme.typography.labelMedium)
             }
             Spacer(modifier = Modifier.size(8.dp))
-            */
+             */
 
             // Font Size - Collapsible section
             SettingsSection(
                 title = "Tamaño: ${prefs.fontSizeSp}sp",
                 expanded = showFontSettings,
-                onToggle = { showFontSettings = !showFontSettings }
+                onToggle = { showFontSettings = !showFontSettings },
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text("A", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Text("A", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(
+                        "A",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Text(
+                        "A",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
                 Slider(
                     value = prefs.fontSizeSp.toFloat(),
                     onValueChange = { onPrefsChanged(prefs.copy(fontSizeSp = it.toInt())) },
                     valueRange = 12f..36f,
                     steps = 11,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
 
@@ -906,18 +927,18 @@ fun NovelReaderControls(
             SettingsSection(
                 title = "Tema: ${prefs.theme.name}",
                 expanded = showThemeSettings,
-                onToggle = { showThemeSettings = !showThemeSettings }
+                onToggle = { showThemeSettings = !showThemeSettings },
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
                     NovelTheme.entries.forEach { theme ->
                         MiniThemeChip(
                             theme = theme,
                             isSelected = prefs.theme == theme,
                             onClick = { onPrefsChanged(prefs.copy(theme = theme)) },
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f),
                         )
                     }
                 }
@@ -931,29 +952,29 @@ private fun SettingsSection(
     title: String,
     expanded: Boolean,
     onToggle: () -> Unit,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Surface(
         onClick = onToggle,
         shape = RoundedCornerShape(12.dp),
         color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     ) {
         Column(modifier = Modifier.padding(10.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     title,
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
                 )
                 Text(
                     if (expanded) "▲" else "▼",
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
                 )
             }
 
@@ -971,7 +992,7 @@ private fun MiniThemeChip(
     theme: NovelTheme,
     isSelected: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val bgColor = when (theme) {
         NovelTheme.SYSTEM -> MaterialTheme.colorScheme.surface
@@ -989,11 +1010,11 @@ private fun MiniThemeChip(
         } else {
             BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
         },
-        modifier = modifier
+        modifier = modifier,
     ) {
         Box(
             contentAlignment = Alignment.Center,
-            modifier = Modifier.padding(vertical = 8.dp)
+            modifier = Modifier.padding(vertical = 8.dp),
         ) {
             Text(
                 text = theme.name.first().toString(),
@@ -1003,7 +1024,7 @@ private fun MiniThemeChip(
                     NovelTheme.DARK -> Color.White
                     NovelTheme.SEPIA -> Color(0xFF5D4037)
                     else -> Color.Black
-                }
+                },
             )
         }
     }
@@ -1014,22 +1035,26 @@ private fun ThemeChip(
     theme: NovelTheme,
     isSelected: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(8.dp),
         color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
-        modifier = modifier
+        modifier = modifier,
     ) {
         Box(
             contentAlignment = Alignment.Center,
-            modifier = Modifier.padding(vertical = 12.dp)
+            modifier = Modifier.padding(vertical = 12.dp),
         ) {
             Text(
                 text = theme.name,
                 style = MaterialTheme.typography.labelMedium,
-                color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
+                color = if (isSelected) {
+                    MaterialTheme.colorScheme.onPrimaryContainer
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                },
             )
         }
     }
@@ -1043,7 +1068,11 @@ data class NovelPrefs(
 )
 
 enum class NovelTheme {
-    SYSTEM, DARK, LIGHT, SEPIA;
+    SYSTEM,
+    DARK,
+    LIGHT,
+    SEPIA,
+    ;
 
     @Composable
     fun textColor(): Color = when (this) {

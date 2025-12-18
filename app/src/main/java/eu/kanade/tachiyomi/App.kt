@@ -17,10 +17,12 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import coil3.ImageLoader
 import coil3.SingletonImageLoader
+import coil3.memory.MemoryCache
 import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import coil3.request.allowRgb565
 import coil3.request.crossfade
 import coil3.util.DebugLogger
+import com.tom_roush.pdfbox.android.PDFBoxResourceLoader
 import dev.mihon.injekt.patchInjekt
 import eu.kanade.domain.DomainModule
 import eu.kanade.domain.base.BasePreferences
@@ -57,7 +59,6 @@ import mihon.core.migration.Migrator
 import mihon.core.migration.migrations.migrations
 import mihon.telemetry.TelemetryConfig
 import org.conscrypt.Conscrypt
-import com.tom_roush.pdfbox.android.PDFBoxResourceLoader
 import tachiyomi.core.common.i18n.stringResource
 import tachiyomi.core.common.preference.Preference
 import tachiyomi.core.common.preference.PreferenceStore
@@ -205,6 +206,12 @@ class App : Application(), DefaultLifecycleObserver, SingletonImageLoader.Factor
                 add(MangaCoverKeyer())
                 add(MangaKeyer())
             }
+
+            memoryCache(
+                MemoryCache.Builder()
+                    .maxSizePercent(context)
+                    .build(),
+            )
 
             crossfade((300 * this@App.animatorDurationScale).toInt())
             allowRgb565(DeviceUtil.isLowRamDevice(this@App))

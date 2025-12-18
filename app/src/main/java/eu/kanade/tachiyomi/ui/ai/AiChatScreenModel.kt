@@ -117,12 +117,12 @@ class AiChatScreenModel(
                         conversationId = conversationId,
                         role = MessageRole.USER,
                         content = content,
-                    )
+                    ),
                 )
             }
 
-            // Build messages with system context
-            val systemPrompt = buildSystemPrompt()
+            // Build messages with system context (includes RAG search based on query)
+            val systemPrompt = buildSystemPrompt(content)
             val allMessages = listOf(ChatMessage.system(systemPrompt)) + state.value.messages
 
             val result = aiRepository.sendMessage(allMessages)
@@ -143,7 +143,7 @@ class AiChatScreenModel(
                                 conversationId = conversationId,
                                 role = MessageRole.ASSISTANT,
                                 content = response.content,
-                            )
+                            ),
                         )
                     }
                 },
@@ -184,7 +184,7 @@ class AiChatScreenModel(
             AiConversationCreate(
                 mangaId = currentState.currentMangaId,
                 title = title,
-            )
+            ),
         )
 
         mutableState.update { it.copy(currentConversationId = newId) }
@@ -244,15 +244,23 @@ class AiChatScreenModel(
             val defaultModel = currentState.selectedProvider.models.firstOrNull() ?: ""
             aiPreferences.model().set(defaultModel)
 
-            mutableState.update { it.copy(
-                showApiKeySetup = false,
-                selectedModel = defaultModel,
-            ) }
+            mutableState.update {
+                it.copy(
+                    showApiKeySetup = false,
+                    selectedModel = defaultModel,
+                )
+            }
         }
     }
 
-    private suspend fun buildSystemPrompt(): String = buildString {
-        appendLine("You are Gexu AI, a friendly and knowledgeable reading companion for manga, manhwa, and light novels.")
+    private suspend fun buildSystemPrompt(userQuery: String = ""): String = buildString {
+        // Apply user's selected tone
+        val tone = tachiyomi.domain.ai.AiTone.fromName(aiPreferences.tone().get())
+
+        appendLine("You are Gexu AI, a knowledgeable reading companion for manga, manhwa, and light novels.")
+        appendLine()
+        appendLine("COMMUNICATION STYLE:")
+        appendLine(tone.systemPrompt)
         appendLine()
 
         // Check if context injection is enabled (saves tokens when disabled)
@@ -267,11 +275,21 @@ class AiChatScreenModel(
                 appendLine()
                 append(getReadingContext.getBriefProfile())
                 appendLine()
-                appendLine("PRIORITY: User is reading a specific manga. Focus answers on THIS content unless they ask for general recommendations.")
+                appendLine(
+                    "PRIORITY: User is reading a specific manga. Focus answers on THIS content unless they ask for general recommendations.",
+                )
             } else {
-                // GENERAL CHAT MODE: Full user profile
-                append(getReadingContext.getGlobalContext())
+                // GENERAL CHAT MODE: Use RAG to enrich context with relevant library items
+                append(getReadingContext.getContextWithRag(userQuery))
             }
+            appendLine()
+        }
+
+        // Apply user's custom instructions if provided
+        val customInstructions = aiPreferences.customInstructions().get()
+        if (customInstructions.isNotBlank()) {
+            appendLine("USER'S CUSTOM INSTRUCTIONS (follow these):")
+            appendLine(customInstructions)
             appendLine()
         }
 
@@ -282,10 +300,10 @@ class AiChatScreenModel(
         appendLine("- Recommend similar series")
         appendLine()
         appendLine("Guidelines:")
-        appendLine("- Be enthusiastic and friendly")
         appendLine("- Keep responses concise unless asked for detail")
         appendLine("- Always avoid major spoilers unless explicitly asked")
         appendLine("- If you don't know something, say so honestly")
+        appendLine("- When asked about the user's library, USE THE PROVIDED CONTEXT to give specific answers.")
     }
 
     data class State(
