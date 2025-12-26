@@ -41,6 +41,8 @@ import tachiyomi.data.category.CategoryRepositoryImpl
 import tachiyomi.data.chapter.ChapterRepositoryImpl
 import tachiyomi.data.history.HistoryRepositoryImpl
 import tachiyomi.data.manga.MangaRepositoryImpl
+import tachiyomi.data.manga.ReaderNotesRepositoryImpl
+import tachiyomi.data.novelcontext.NovelContextRepositoryImpl
 import tachiyomi.data.pdftoc.PdfTocRepositoryImpl
 import tachiyomi.data.release.ReleaseServiceImpl
 import tachiyomi.data.source.SourceRepositoryImpl
@@ -71,6 +73,7 @@ import tachiyomi.domain.history.interactor.GetTotalReadDuration
 import tachiyomi.domain.history.interactor.RemoveHistory
 import tachiyomi.domain.history.interactor.UpsertHistory
 import tachiyomi.domain.history.repository.HistoryRepository
+import tachiyomi.domain.manga.interactor.DeleteReaderNote
 import tachiyomi.domain.manga.interactor.FetchInterval
 import tachiyomi.domain.manga.interactor.GetDuplicateLibraryManga
 import tachiyomi.domain.manga.interactor.GetFavorites
@@ -78,11 +81,15 @@ import tachiyomi.domain.manga.interactor.GetLibraryManga
 import tachiyomi.domain.manga.interactor.GetManga
 import tachiyomi.domain.manga.interactor.GetMangaByUrlAndSourceId
 import tachiyomi.domain.manga.interactor.GetMangaWithChapters
+import tachiyomi.domain.manga.interactor.GetReaderNotes
 import tachiyomi.domain.manga.interactor.NetworkToLocalManga
 import tachiyomi.domain.manga.interactor.ResetViewerFlags
 import tachiyomi.domain.manga.interactor.SetMangaChapterFlags
 import tachiyomi.domain.manga.interactor.UpdateMangaNotes
+import tachiyomi.domain.manga.interactor.UpsertReaderNote
 import tachiyomi.domain.manga.repository.MangaRepository
+import tachiyomi.domain.manga.repository.ReaderNotesRepository
+import tachiyomi.domain.novelcontext.repository.NovelContextRepository
 import tachiyomi.domain.pdftoc.interactor.GetPdfToc
 import tachiyomi.domain.pdftoc.interactor.SavePdfToc
 import tachiyomi.domain.pdftoc.repository.PdfTocRepository
@@ -139,6 +146,12 @@ class DomainModule : InjektModule {
         addFactory { SetMangaCategories(get()) }
         addFactory { GetExcludedScanlators(get()) }
         addFactory { SetExcludedScanlators(get()) }
+
+        // Reader Notes
+        addSingletonFactory<ReaderNotesRepository> { ReaderNotesRepositoryImpl(get()) }
+        addFactory { GetReaderNotes(get()) }
+        addFactory { UpsertReaderNote(get()) }
+        addFactory { DeleteReaderNote(get()) }
         addFactory {
             MigrateMangaUseCase(
                 get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(),
@@ -173,6 +186,9 @@ class DomainModule : InjektModule {
         addSingletonFactory<PdfTocRepository> { PdfTocRepositoryImpl(get()) }
         addFactory { GetPdfToc(get()) }
         addFactory { SavePdfToc(get()) }
+
+        // Novel Context (Reading Buddy)
+        addSingletonFactory<NovelContextRepository> { NovelContextRepositoryImpl(get()) }
 
         addSingletonFactory<HistoryRepository> { HistoryRepositoryImpl(get()) }
         addFactory { GetHistory(get()) }

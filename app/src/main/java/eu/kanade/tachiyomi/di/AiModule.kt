@@ -7,6 +7,7 @@ import tachiyomi.data.ai.AiRepositoryImpl
 import tachiyomi.domain.ai.AiPreferences
 import tachiyomi.domain.ai.repository.AiConversationRepository
 import tachiyomi.domain.ai.repository.AiRepository
+import tachiyomi.domain.ai.tools.AiToolHandler
 import uy.kohesive.injekt.api.InjektModule
 import uy.kohesive.injekt.api.InjektRegistrar
 import uy.kohesive.injekt.api.addSingletonFactory
@@ -23,6 +24,7 @@ class AiModule : InjektModule {
                     ignoreUnknownKeys = true
                     isLenient = true
                 },
+                toolHandler = get<AiToolHandler>(),
             )
         }
 
@@ -84,6 +86,20 @@ class AiModule : InjektModule {
             )
         }
 
+        // Tool handler for function calling (needs SearchLibrary for find_similar_manga)
+        addSingletonFactory {
+            AiToolHandler(
+                mangaRepository = get(),
+                chapterRepository = get(),
+                historyRepository = get(),
+                trackRepository = get(),
+                readerNotesRepository = get(),
+                categoryRepository = get(),
+                novelContextRepository = get(),
+                searchLibrary = get(),
+            )
+        }
+
         addSingletonFactory {
             tachiyomi.domain.ai.GetReadingContext(
                 mangaRepository = get(),
@@ -92,6 +108,15 @@ class AiModule : InjektModule {
                 categoryRepository = get(),
                 searchLibrary = get(),
                 trackRepository = get(),
+                readerNotesRepository = get(),
+                novelContextRepository = get(),
+            )
+        }
+
+        addSingletonFactory {
+            tachiyomi.domain.ai.interactor.GenerateNovelSummary(
+                aiRepository = get(),
+                novelContextRepository = get(),
             )
         }
 
