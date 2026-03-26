@@ -306,7 +306,7 @@ private fun ReaderNoteCard(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        text = "📍",
+                        text = "\uD83D\uDCCD",
                         style = MaterialTheme.typography.bodyMedium,
                     )
                     Spacer(Modifier.width(4.dp))

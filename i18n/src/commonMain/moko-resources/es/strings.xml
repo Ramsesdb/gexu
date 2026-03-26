@@ -705,7 +705,7 @@
     <string name="library_sync_complete">La biblioteca se ha sincronizado correctamente</string>
     <string name="syncing_library">Sincronizando la biblioteca</string>
     <string name="information_cloudflare_help">Toca aquí para solucionar problemas de acceso con Cloudflare</string>
-    <string name="download_cache_invalidated">Se ha borrado el índice de descargas</string>
+    <string name="download_cache_invalidated">Reconstruyendo el índice de descargas</string>
     <string name="track_activity_name">Iniciar sesión en el servicio</string>
     <string name="create_backup_file_error">No se ha podido crear un archivo de respaldo</string>
     <string name="exception_unknown_host">«%s» no parece estar disponible</string>
@@ -902,29 +902,6 @@
     <string name="pref_download_concurrent_pages">Descarga simultánea de páginas</string>
     <string name="pref_download_concurrent_pages_summary">Cantidad de páginas a descargar simultáneamente desde cada fuente remota</string>
     <string name="action_webview_close_tab">Cerrar pestaña</string>
-
-    <!-- AI Wizard Onboarding -->
-    <string name="ai_wizard_welcome_title">¡Configura tu asistente de IA!</string>
-    <string name="ai_wizard_welcome_desc">Necesitas una API key gratuita para usar las funciones de IA. ¡Toma menos de 1 minuto!</string>
-    <string name="ai_wizard_get_key">Obtener API Key Gratis</string>
-    <string name="ai_wizard_paste_key">Pegar desde portapapeles</string>
-    <string name="ai_wizard_gemini_recommended">(Recomendado - Gratis)</string>
-    <string name="ai_wizard_key_detected">¡API Key detectada!</string>
-    <string name="ai_wizard_step_provider">Elige proveedor</string>
-    <string name="ai_wizard_step_get">Obtén tu key</string>
-    <string name="ai_wizard_step_paste">Pega la key</string>
-    <string name="ai_wizard_instructions_gemini">1. Inicia sesión con Google\n2. Pulsa "Create API Key"\n3. Copia la key generada</string>
-    <string name="ai_wizard_instructions_openai">1. Inicia sesión en OpenAI\n2. Ve a API Keys\n3. Crea y copia una nueva key</string>
-    <string name="ai_wizard_instructions_anthropic">1. Inicia sesión en Anthropic\n2. Ve a API Keys\n3. Crea y copia una nueva key</string>
-    <string name="ai_wizard_instructions_openrouter">1. Inicia sesión en OpenRouter\n2. Ve a Keys\n3. Crea y copia una nueva key</string>
-    <string name="ai_wizard_back_to_app">Al copiar, regresa aquí y la detectaremos automáticamente.</string>
-    <string name="ai_wizard_have_key">Ya tengo una key</string>
-    <string name="ai_wizard_next">Siguiente</string>
-    <string name="ai_wizard_back">Atrás</string>
-    <string name="ai_wizard_start">Comenzar</string>
-    <string name="ai_wizard_why_needed">¿Por qué necesito una API key?</string>
-    <string name="ai_wizard_why_desc">Los proveedores de IA requieren autenticación para usar sus servicios. Tu key se guarda localmente en tu dispositivo y nunca se comparte.</string>
-    <string name="ai_wizard_free_info">💰 Completamente Gratis</string>
-    <string name="ai_wizard_free_desc">Google Gemini ofrece un tier gratuito generoso. NO se te cobrará nada a menos que añadas manualmente un método de pago en tu cuenta de Google Cloud.</string>
-    <string name="ai_wizard_no_card">No requiere tarjeta de crédito</string>
+    <string name="action_filter_excluded_scanlators">Ocultar equipos de traducción excluidos</string>
+    <string name="download_bookmarked">Favoritos</string>
 </resources>

@@ -1,46 +1,26 @@
 pluginManagement {
-    resolutionStrategy {
-        eachPlugin {
-            val regex = "com.android.(library|application)".toRegex()
-            if (regex matches requested.id.id) {
-                useModule("com.android.tools.build:gradle:${requested.version}")
-            }
-        }
-    }
+    includeBuild("gradle/build-logic")
     repositories {
-        // Official sources first, JetBrains cache-redirector as fallback
-        gradlePluginPortal()
         google()
         mavenCentral()
-        maven(url = "https://repo1.maven.org/maven2")
-        maven(url = "https://maven-central.storage-download.googleapis.com/maven2")
-        maven(url = "https://cache-redirector.jetbrains.com/maven-central")
+        gradlePluginPortal()
+        maven(url = "https://www.jitpack.io")
     }
 }
 
 dependencyResolutionManagement {
     versionCatalogs {
-        create("kotlinx") {
-            from(files("gradle/kotlinx.versions.toml"))
-        }
-        create("androidx") {
-            from(files("gradle/androidx.versions.toml"))
-        }
-        create("compose") {
-            from(files("gradle/compose.versions.toml"))
+        create("mihonx") {
+            from(files("gradle/mihon.versions.toml"))
         }
     }
     // Preferir repos definidos aquí sobre los de proyecto
     repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
     repositories {
-        // Official sources first, JetBrains cache-redirector as fallback
         google()
         mavenCentral()
-        maven(url = "https://repo1.maven.org/maven2")
-        maven(url = "https://maven-central.storage-download.googleapis.com/maven2")
-        maven(url = "https://jitpack.io")
+        maven(url = "https://www.jitpack.io")
         maven(url = "https://maven.ghostscript.com")
-        maven(url = "https://cache-redirector.jetbrains.com/maven-central")
     }
 }
 
