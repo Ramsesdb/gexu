@@ -10,10 +10,10 @@ Guía rápida de comandos Gradle para compilar y probar Gexu.
 
 ```bash
 # Build optimizado con firma debug (RECOMENDADO para probar en teléfono)
-./gradlew :app:installStandardPreview
+./gradlew :app:installPreview
 
 # APK generado en:
-# app/build/outputs/apk/standard/preview/app-standard-arm64-v8a-preview.apk
+# app/build/outputs/apk/preview/app-arm64-v8a-preview.apk
 ```
 
 > [!TIP]
@@ -25,23 +25,23 @@ Guía rápida de comandos Gradle para compilar y probar Gexu.
 
 ```bash
 # Build rápido sin optimización (para debugging)
-./gradlew :app:assembleStandardDebug
+./gradlew :app:assembleDebug
 
 # APK generado en:
-# app/build/outputs/apk/standard/debug/app-standard-arm64-v8a-debug.apk
+# app/build/outputs/apk/debug/app-arm64-v8a-debug.apk
 ```
 
 ### Instalar Directamente en el Dispositivo
 
 ```bash
 # Preview (recomendado para rendimiento)
-./gradlew :app:installStandardPreview
+./gradlew :app:installPreview
 
 # Debug (para desarrollo con logs)
-./gradlew :app:installStandardDebug
+./gradlew :app:installDebug
 
 # O manualmente con ADB:
-adb install -r app/build/outputs/apk/standard/preview/app-standard-arm64-v8a-preview.apk
+adb install -r app/build/outputs/apk/preview/app-arm64-v8a-preview.apk
 ```
 
 > [!NOTE]
@@ -53,17 +53,17 @@ adb install -r app/build/outputs/apk/standard/preview/app-standard-arm64-v8a-pre
 
 | Comando | Descripción | Uso |
 |---------|-------------|-----|
-| `assembleStandardDebug` | Debug con logs y depuración | Desarrollo diario |
-| `assembleStandardRelease` | Release optimizado con R8 | Distribución |
-| `assembleStandardPreview` | Release con firma debug | Testing pre-release |
-| `assembleStandardFoss` | Sin servicios propietarios | F-Droid compatible |
-| `assembleStandardBenchmark` | Optimizado para profiling | Medición de rendimiento |
+| `assembleDebug` | Debug con logs y depuración | Desarrollo diario |
+| `assembleRelease` | Release optimizado con R8 | Distribución |
+| `assemblePreview` | Release con firma debug | Testing pre-release |
+| `assembleFoss` | Sin servicios propietarios | F-Droid compatible |
+| `assembleBenchmark` | Optimizado para profiling | Medición de rendimiento |
 
 ```bash
 # Ejemplos:
-./gradlew :app:assembleStandardRelease
-./gradlew :app:assembleStandardPreview
-./gradlew :app:assembleStandardFoss
+./gradlew :app:assembleRelease
+./gradlew :app:assemblePreview
+./gradlew :app:assembleFoss
 ```
 
 ---
@@ -75,7 +75,7 @@ adb install -r app/build/outputs/apk/standard/preview/app-standard-arm64-v8a-pre
 ./gradlew clean
 
 # Limpiar y reconstruir
-./gradlew clean :app:assembleStandardDebug
+./gradlew clean :app:assembleDebug
 ```
 
 ---
@@ -90,7 +90,7 @@ adb install -r app/build/outputs/apk/standard/preview/app-standard-arm64-v8a-pre
 ./gradlew spotlessApply
 
 # Ejecutar tests unitarios
-./gradlew testStandardDebugUnitTest
+./gradlew testDebugUnitTest
 ```
 
 ---
@@ -120,22 +120,22 @@ adb logcat -d > logcat.txt
 
 ### Build + Install rápido
 ```powershell
-./gradlew :app:installStandardDebug
+./gradlew :app:installDebug
 ```
 
 ### Limpieza completa + Build
 ```powershell
-./gradlew clean :app:assembleStandardDebug
+./gradlew clean :app:assembleDebug
 ```
 
 ### Verificar formato + Build
 ```powershell
-./gradlew spotlessApply :app:assembleStandardDebug
+./gradlew spotlessApply :app:assembleDebug
 ```
 
 ### Build Release (para distribuir)
 ```powershell
-./gradlew :app:assembleStandardRelease
+./gradlew :app:assembleRelease
 ```
 
 ---
@@ -144,10 +144,10 @@ adb logcat -d > logcat.txt
 
 | Build Type | Ruta del APK |
 |------------|--------------|
-| Debug | `app/build/outputs/apk/standard/debug/` |
-| Release | `app/build/outputs/apk/standard/release/` |
-| Preview | `app/build/outputs/apk/standard/preview/` |
-| FOSS | `app/build/outputs/apk/standard/foss/` |
+| Debug | `app/build/outputs/apk/debug/` |
+| Release | `app/build/outputs/apk/release/` |
+| Preview | `app/build/outputs/apk/preview/` |
+| FOSS | `app/build/outputs/apk/foss/` |
 
 > [!NOTE]
 > El proyecto genera APKs por arquitectura (`arm64-v8a`, `armeabi-v7a`, `x86`, `x86_64`) y uno universal. Para teléfonos modernos, usa `arm64-v8a`.
