@@ -1927,8 +1927,8 @@ class NovelViewer(private val activity: ReaderActivity) : Viewer, tachiyomi.doma
 
         val isUp = event.action == KeyEvent.ACTION_UP
         val readerPreferences: ReaderPreferences = Injekt.get()
-        val volumeKeysEnabled = readerPreferences.readWithVolumeKeys().get()
-        val volumeKeysInverted = readerPreferences.readWithVolumeKeysInverted().get()
+        val volumeKeysEnabled = readerPreferences.readWithVolumeKeys.get()
+        val volumeKeysInverted = readerPreferences.readWithVolumeKeysInverted.get()
 
         when (event.keyCode) {
             KeyEvent.KEYCODE_VOLUME_DOWN -> {

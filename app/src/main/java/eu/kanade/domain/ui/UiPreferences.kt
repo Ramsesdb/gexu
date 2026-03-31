@@ -13,7 +13,7 @@ import java.time.format.FormatStyle
 import java.util.Locale
 
 class UiPreferences(
-    preferenceStore: PreferenceStore,
+    val preferenceStore: PreferenceStore,
 ) {
 
     val themeMode: Preference<ThemeMode> = preferenceStore.getEnum("pref_theme_mode_key", ThemeMode.SYSTEM)

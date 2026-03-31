@@ -433,7 +433,6 @@ class ReaderActivity : BaseActivity() {
             },
         )
 
-
         val onDismissRequest = viewModel::closeDialog
         when (state.dialog) {
             is ReaderViewModel.Dialog.Loading -> {
@@ -683,7 +682,6 @@ class ReaderActivity : BaseActivity() {
                 as? android.net.ConnectivityManager
             value = connectivityManager?.activeNetworkInfo?.isConnected == true
         }
-
 
         ReaderAppBars(
             visible = state.menuVisible,

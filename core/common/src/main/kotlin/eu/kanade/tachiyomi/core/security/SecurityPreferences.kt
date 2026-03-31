@@ -7,7 +7,7 @@ import tachiyomi.core.common.preference.getEnum
 import tachiyomi.i18n.MR
 
 class SecurityPreferences(
-    preferenceStore: PreferenceStore,
+    val preferenceStore: PreferenceStore,
 ) {
 
     val useAuthenticator: Preference<Boolean> = preferenceStore.getBoolean("use_biometric_lock", false)
@@ -34,7 +34,7 @@ class SecurityPreferences(
      * When true, hides manga with NSFW genres from the library.
      * Protected by biometric authentication.
      */
-    fun hideNsfwInLibrary() = preferenceStore.getBoolean("hide_nsfw_in_library", false)
+    val hideNsfwInLibrary = preferenceStore.getBoolean("hide_nsfw_in_library", false)
 
     enum class SecureScreenMode(val titleRes: StringResource) {
         ALWAYS(MR.strings.lock_always),
