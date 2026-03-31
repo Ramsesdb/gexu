@@ -1,8 +1,10 @@
 -dontobfuscate
 
--keep,allowoptimization class eu.kanade.**
--keep,allowoptimization class tachiyomi.**
--keep,allowoptimization class mihon.**
+-keep class eu.kanade.** { *; }
+-keep class tachiyomi.** { *; }
+-keep class mihon.** { *; }
+-keep class com.ramsesbr.** { *; }
+-keep class com.google.mlkit.** { *; }
 
 # Keep common dependencies used in extensions
 -keep,allowoptimization class androidx.preference.** { public protected *; }

@@ -72,8 +72,6 @@ android {
         create("preview") {
             initWith(release)
 
-            applicationIdSuffix = ".debug"
-
             versionNameSuffix = debug.versionNameSuffix
             signingConfig = debug.signingConfig
 

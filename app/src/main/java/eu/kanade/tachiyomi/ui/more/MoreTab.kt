@@ -80,8 +80,8 @@ data object MoreTab : Tab {
         val newUpdatesCount by androidx.compose.runtime.produceState(initialValue = 0) {
             val libraryPrefs = uy.kohesive.injekt.Injekt.get<tachiyomi.domain.library.service.LibraryPreferences>()
             kotlinx.coroutines.flow.combine(
-                libraryPrefs.newShowUpdatesCount().changes(),
-                libraryPrefs.newUpdatesCount().changes(),
+                libraryPrefs.newShowUpdatesCount.changes(),
+                libraryPrefs.newUpdatesCount.changes(),
             ) { show, count -> if (show) count else 0 }
                 .collect { value = it }
         }

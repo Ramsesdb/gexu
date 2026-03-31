@@ -84,7 +84,7 @@ object SettingsSecurityScreen : SearchableSettings {
 
                 // Hide NSFW content in Library (with biometric protection)
                 Preference.PreferenceItem.SwitchPreference(
-                    preference = securityPreferences.hideNsfwInLibrary(),
+                    preference = securityPreferences.hideNsfwInLibrary,
                     title = stringResource(MR.strings.pref_hide_nsfw_library),
                     subtitle = stringResource(MR.strings.pref_hide_nsfw_library_summary),
                     onValueChanged = {
